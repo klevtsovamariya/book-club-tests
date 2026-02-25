@@ -1,9 +1,9 @@
 package tests;
 
-import io.restassured.http.ContentType;
 import models.pojo.RegistrationBodyPojoModel;
 import models.pojo.RegistrationResponsePojoModel;
 import net.datafaker.Faker;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static io.restassured.RestAssured.given;
@@ -13,6 +13,17 @@ import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class RegistrationTests {
+
+    String username;
+    String password;
+
+    @BeforeEach
+    public void prepareTestData() {
+        Faker faker = new Faker();
+        username = faker.name().firstName();
+        password = faker.name().firstName();
+    }
+
     @Test
     public void successfulRegistrationTest_bad_practice(){
         Faker faker = new Faker();
@@ -38,10 +49,6 @@ public class RegistrationTests {
 
     @Test
     public void successfulRegistrationTest(){
-        Faker faker = new Faker();
-        String username = faker.name().firstName();
-        String password = faker.name().firstName();
-
         String data = "{\"username\": \"" + username + "\",\"password\": \"" + password + "\"}";
 
         given()
@@ -59,10 +66,6 @@ public class RegistrationTests {
 
     @Test
     public void successfulRegistrationTest_with_pojo(){
-        Faker faker = new Faker();
-        String username = faker.name().firstName();
-        String password = faker.name().firstName();
-
         RegistrationBodyPojoModel data = new RegistrationBodyPojoModel();
         data.setUsername(username);
         data.setPassword(password);
@@ -84,10 +87,6 @@ public class RegistrationTests {
 
     @Test
     public void existingUser400Test(){
-        Faker faker = new Faker();
-        String username = faker.name().firstName();
-        String password = faker.name().firstName();
-
         String data = "{\"username\": \"" + username + "\",\"password\": \"" + password + "\"}";
 
         given()
@@ -116,10 +115,6 @@ public class RegistrationTests {
 
     @Test
     public void invalidUsername400Test(){
-        Faker faker = new Faker();
-        String username = faker.name().fullName();
-        String password = faker.name().firstName();
-
         String data = "{\"username\": \"" + username + "\",\"password\": \"" + password + "\"}";
 
         given()
@@ -138,10 +133,6 @@ public class RegistrationTests {
 
     @Test
     public void unsupportedMediaType415Test(){
-        Faker faker = new Faker();
-        String username = faker.name().fullName();
-        String password = faker.name().firstName();
-
         String data = "{\"username\": \"" + username + "\",\"password\": \"" + password + "\"}";
 
         given()
@@ -156,10 +147,6 @@ public class RegistrationTests {
 
     @Test
     public void negativeRegistration500Test(){
-        Faker faker = new Faker();
-        String username = faker.name().fullName();
-        String password = faker.name().firstName();
-
         String data = "{\"username\": \"" + username + "\",\"password\": \"" + password + "\"}";
 
         given()
