@@ -1,16 +1,14 @@
 package tests;
 
-import io.restassured.RestAssured;
-import io.restassured.response.Response;
 import models.login.LoginBodyModel;
-import models.login.SuccessfulLoginResponseModel;
+import models.logout.LogoutBodyModel;
 import org.junit.jupiter.api.Test;
 
 import static io.restassured.RestAssured.given;
-import static io.restassured.http.ContentType.JSON;
-import static java.lang.String.format;
 import static specs.login.LoginSpec.loginRequestSpec;
 import static specs.login.LoginSpec.successfulLoginResponseSpec;
+import static specs.logout.LogoutSpec.logoutRequestSpec;
+import static specs.logout.LogoutSpec.successfulLogoutResponseSpec;
 
 public class LogoutTests extends TestBase {
 
@@ -29,21 +27,14 @@ public class LogoutTests extends TestBase {
                 .spec(successfulLoginResponseSpec)
                 .extract().path("refresh");
 
-        // todo move to models & specs
-        String logoutData = format("{\"refresh\": \"%s\"}", refreshToken);
+        LogoutBodyModel logoutData = new LogoutBodyModel(refreshToken);
 
-        given()
-            .log().all()
-            .contentType(JSON)
+        given(logoutRequestSpec)
             .body(logoutData)
-            .basePath("/api/v1")
             .when()
             .post("/auth/logout/")
             .then()
-            .log().all()
-            .statusCode(200);
-
-        // todo check logoutResponse is empty
+            .spec(successfulLogoutResponseSpec);
     }
 
     // todo add more negative tests
