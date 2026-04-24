@@ -15,5 +15,14 @@ public class LogoutSpec {
             .log(ALL)
             .expectStatusCode(200)
             .build();
-}
 
+    public static ResponseSpecification invalidLogoutResponseSpec = new ResponseSpecBuilder()
+            .log(ALL)
+            .expectStatusCode(400)
+            .build();
+
+    public static ResponseSpecification unauthorizedLogoutResponseSpec = new ResponseSpecBuilder()
+            .log(ALL)
+            .expectStatusCode(401)
+            .build();
+}

@@ -29,5 +29,10 @@ public class LoginSpec {
             .expectBody("detail", notNullValue())
             .build();
 
+    public static ResponseSpecification invalidLoginResponseSpec = new ResponseSpecBuilder()
+            .log(ALL)
+            .expectStatusCode(400)
+            .build();
+
 
 }

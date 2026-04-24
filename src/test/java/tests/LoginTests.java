@@ -1,6 +1,7 @@
 package tests;
 
 import models.login.LoginBodyModel;
+import models.login.LoginValidationErrorResponseModel;
 import models.login.SuccessfulLoginResponseModel;
 import models.login.WrongCredentialsLoginResponseModel;
 import org.junit.jupiter.api.Test;
@@ -34,6 +35,28 @@ public class LoginTests extends TestBase {
         assertThat(actualDetailError).isEqualTo(expectedDetailError);
     }
 
-    // todo add more negative tests
+    @Test
+    public void withoutLoginTest() {
+        LoginBodyModel loginData = new LoginBodyModel("", LOGIN_PASSWORD);
+
+        LoginValidationErrorResponseModel loginResponse = api.auth.loginInvalid(loginData);
+
+        String expectedUsernameError = EMPTY_ERROR;
+        String actualUsernameError = loginResponse.username().get(0);
+        assertThat(loginResponse.username()).isNotNull().isNotEmpty();
+        assertThat(actualUsernameError).isEqualTo(expectedUsernameError);
+    }
+
+    @Test
+    public void withoutPasswordLoginTest() {
+        LoginBodyModel loginData = new LoginBodyModel(LOGIN_USERNAME, "");
+
+        LoginValidationErrorResponseModel loginResponse = api.auth.loginInvalid(loginData);
+
+        String expectedPasswordError = EMPTY_ERROR;
+        String actualPasswordError = loginResponse.password().get(0);
+        assertThat(loginResponse.password()).isNotNull().isNotEmpty();
+        assertThat(actualPasswordError).isEqualTo(expectedPasswordError);
+    }
 
 }

@@ -2,11 +2,13 @@ package tests;
 
 import models.registration.ExistingUserResponseModel;
 import models.registration.RegistrationBodyModel;
+import models.registration.RegistrationValidationErrorResponseModel;
 import models.registration.SuccessfulRegistrationResponseModel;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static tests.TestData.EMPTY_ERROR;
 import static tests.TestData.REGISTRATION_EXISTING_USER_ERROR;
 import static tests.TestData.REGISTRATION_IP_REGEXP;
 
@@ -55,6 +57,44 @@ public class RegistrationTests extends TestBase {
         assertThat(actualError).isEqualTo(expectedError);
     }
 
-    // todo add more negative tests
+    @Test
+    public void registrationWithoutUsernameTest() {
+        RegistrationBodyModel registrationData = new RegistrationBodyModel("", password);
+
+        RegistrationValidationErrorResponseModel response = api.users.registerInvalid(registrationData);
+
+        String expectedUsernameError = EMPTY_ERROR;
+        String actualUsernameError = response.username().get(0);
+        assertThat(response.username()).isNotNull().isNotEmpty();
+        assertThat(actualUsernameError).isEqualTo(expectedUsernameError);
+    }
+
+    @Test
+    public void registrationWithoutPasswordTest() {
+        RegistrationBodyModel registrationData = new RegistrationBodyModel(username, "");
+
+        RegistrationValidationErrorResponseModel response = api.users.registerInvalid(registrationData);
+
+        String expectedPasswordError = EMPTY_ERROR;
+        String actualPasswordError = response.password().get(0);
+        assertThat(response.password()).isNotNull().isNotEmpty();
+        assertThat(actualPasswordError).isEqualTo(expectedPasswordError);
+    }
+
+    @Test
+    public void registrationWithoutCredentialsTest() {
+        RegistrationBodyModel registrationData = new RegistrationBodyModel("", "");
+
+        RegistrationValidationErrorResponseModel response = api.users.registerInvalid(registrationData);
+
+        String expectedUsernameError = EMPTY_ERROR;
+        String actualUsernameError = response.username().get(0);
+        String expectedPasswordError = EMPTY_ERROR;
+        String actualPasswordError = response.password().get(0);
+        assertThat(response.username()).isNotNull().isNotEmpty();
+        assertThat(actualUsernameError).isEqualTo(expectedUsernameError);
+        assertThat(response.password()).isNotNull().isNotEmpty();
+        assertThat(actualPasswordError).isEqualTo(expectedPasswordError);
+    }
 
 }

@@ -50,7 +50,6 @@ public class ClubsTests extends TestBase {
         ClubsListResponseModel response = api.clubs.getClubs();
 
         assertThat(response.count()).isNotNull();
-        // next и previous могут быть null при одной странице
         assertThat(response.results()).isNotNull();
     }
 }

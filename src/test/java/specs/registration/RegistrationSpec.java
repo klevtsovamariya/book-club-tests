@@ -30,5 +30,10 @@ public class RegistrationSpec {
                     "schemas/registration/existing_user_registration_response_schema.json"))
             .expectBody("username", notNullValue())
             .build();
+
+    public static ResponseSpecification invalidRegistrationResponseSpec = new ResponseSpecBuilder()
+            .log(ALL)
+            .expectStatusCode(400)
+            .build();
 }
 
