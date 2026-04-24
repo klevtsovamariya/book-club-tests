@@ -36,3 +36,5 @@ bin/
 
 ### VS Code ###
 .vscode/
+gradlew
+gradlew.bat
