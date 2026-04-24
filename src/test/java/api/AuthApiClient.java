@@ -9,9 +9,10 @@ import models.logout.LogoutBodyModel;
 import models.logout.LogoutValidationErrorResponseModel;
 
 import static io.restassured.RestAssured.given;
-import static specs.login.LoginSpec.loginRequestSpec;
 import static specs.login.LoginSpec.invalidLoginResponseSpec;
+import static specs.login.LoginSpec.loginRequestSpec;
 import static specs.login.LoginSpec.successfulLoginResponseSpec;
+import static specs.login.LoginSpec.wrongLoginNullPasswordResponseSpec;
 import static specs.login.LoginSpec.wrongCredentialsLoginResponseSpec;
 import static specs.logout.LogoutSpec.invalidLogoutResponseSpec;
 import static specs.logout.LogoutSpec.logoutRequestSpec;
@@ -68,14 +69,26 @@ public class AuthApiClient {
                 .as(WrongCredentialsLoginResponseModel.class);
     }
 
-    @Step("Авторизация с невалидным телом запроса")
-    public LoginValidationErrorResponseModel loginInvalid(LoginBodyModel loginBody) {
+    @Step("Авторизация без username")
+    public LoginValidationErrorResponseModel loginWithoutUsername(LoginBodyModel loginBody) {
         return given(loginRequestSpec)
                 .body(loginBody)
                 .when()
                 .post("/auth/token/")
                 .then()
                 .spec(invalidLoginResponseSpec)
+                .extract()
+                .as(LoginValidationErrorResponseModel.class);
+    }
+
+    @Step("Авторизация без password")
+    public LoginValidationErrorResponseModel loginWithoutPassword(LoginBodyModel loginBody) {
+        return given(loginRequestSpec)
+                .body(loginBody)
+                .when()
+                .post("/auth/token/")
+                .then()
+                .spec(wrongLoginNullPasswordResponseSpec)
                 .extract()
                 .as(LoginValidationErrorResponseModel.class);
     }
@@ -102,7 +115,7 @@ public class AuthApiClient {
                 .as(LogoutValidationErrorResponseModel.class);
     }
 
-    @Step("Logout Р·Р°РїСЂРѕСЃ СЃ РЅРµРІР°Р»РёРґРЅС‹Рј refresh С‚РѕРєРµРЅРѕРј")
+    @Step("Logout с невалидным refresh токеном")
     public LogoutValidationErrorResponseModel logoutUnauthorized(LogoutBodyModel logoutBody) {
         return given(logoutRequestSpec)
                 .body(logoutBody)

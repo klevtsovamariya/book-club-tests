@@ -2,4 +2,4 @@ package models.logout;
 
 import java.util.List;
 
-public record LogoutValidationErrorResponseModel(List<String> refresh, String detail) {}
+public record LogoutValidationErrorResponseModel(List<String> refresh, String detail, String code) {}

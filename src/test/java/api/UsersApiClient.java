@@ -5,17 +5,20 @@ import models.registration.ExistingUserResponseModel;
 import models.registration.RegistrationBodyModel;
 import models.registration.RegistrationValidationErrorResponseModel;
 import models.registration.SuccessfulRegistrationResponseModel;
-import models.users.UpdateUserPatchBodyModel;
-import models.users.UpdateUserPutBodyModel;
-import models.users.UpdateUserResponseModel;
-import models.users.UpdateUserValidationErrorResponseModel;
+import models.update.UpdateUserPatchBodyModel;
+import models.update.UpdateUserPutBodyModel;
+import models.update.UpdateUserResponseModel;
+import models.update.UpdateUserValidationErrorResponseModel;
 
 import static io.restassured.RestAssured.given;
 import static specs.registration.RegistrationSpec.existingUserRegistrationResponseSpec;
-import static specs.registration.RegistrationSpec.invalidRegistrationResponseSpec;
 import static specs.registration.RegistrationSpec.registrationRequestSpec;
 import static specs.registration.RegistrationSpec.successfulRegistrationResponseSpec;
-import static specs.updateuser.UpdateUserSpec.invalidUpdateUserResponseSpec;
+import static specs.registration.RegistrationSpec.wrongRegistrationWithoutCredentialsResponseSpec;
+import static specs.registration.RegistrationSpec.wrongRegistrationWithoutLoginResponseSpec;
+import static specs.registration.RegistrationSpec.wrongRegistrationWithoutPasswordResponseSpec;
+import static specs.updateuser.UpdateUserSpec.invalidPatchUpdateUserResponseSpec;
+import static specs.updateuser.UpdateUserSpec.invalidPutUpdateUserResponseSpec;
 import static specs.updateuser.UpdateUserSpec.successfulUpdateUserResponseSpec;
 import static specs.updateuser.UpdateUserSpec.unauthorizedUpdateUserResponseSpec;
 import static specs.updateuser.UpdateUserSpec.updateUserRequestSpec;
@@ -47,14 +50,38 @@ public class UsersApiClient {
                 .as(ExistingUserResponseModel.class);
     }
 
-    @Step("Невалидная регистрация пользователя")
-    public RegistrationValidationErrorResponseModel registerInvalid(RegistrationBodyModel body) {
+    @Step("Регистрация без username")
+    public RegistrationValidationErrorResponseModel registerWithoutUsername(RegistrationBodyModel body) {
         return given(registrationRequestSpec)
                 .body(body)
                 .when()
                 .post("/users/register/")
                 .then()
-                .spec(invalidRegistrationResponseSpec)
+                .spec(wrongRegistrationWithoutLoginResponseSpec)
+                .extract()
+                .as(RegistrationValidationErrorResponseModel.class);
+    }
+
+    @Step("Регистрация без password")
+    public RegistrationValidationErrorResponseModel registerWithoutPassword(RegistrationBodyModel body) {
+        return given(registrationRequestSpec)
+                .body(body)
+                .when()
+                .post("/users/register/")
+                .then()
+                .spec(wrongRegistrationWithoutPasswordResponseSpec)
+                .extract()
+                .as(RegistrationValidationErrorResponseModel.class);
+    }
+
+    @Step("Регистрация без username и password")
+    public RegistrationValidationErrorResponseModel registerWithoutCredentials(RegistrationBodyModel body) {
+        return given(registrationRequestSpec)
+                .body(body)
+                .when()
+                .post("/users/register/")
+                .then()
+                .spec(wrongRegistrationWithoutCredentialsResponseSpec)
                 .extract()
                 .as(RegistrationValidationErrorResponseModel.class);
     }
@@ -93,7 +120,7 @@ public class UsersApiClient {
                 .when()
                 .put(UPDATE_USER_ENDPOINT)
                 .then()
-                .spec(invalidUpdateUserResponseSpec)
+                .spec(invalidPutUpdateUserResponseSpec)
                 .extract()
                 .as(UpdateUserValidationErrorResponseModel.class);
     }
@@ -106,7 +133,7 @@ public class UsersApiClient {
                 .when()
                 .patch(UPDATE_USER_ENDPOINT)
                 .then()
-                .spec(invalidUpdateUserResponseSpec)
+                .spec(invalidPatchUpdateUserResponseSpec)
                 .extract()
                 .as(UpdateUserValidationErrorResponseModel.class);
     }

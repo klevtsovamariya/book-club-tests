@@ -31,9 +31,30 @@ public class RegistrationSpec {
             .expectBody("username", notNullValue())
             .build();
 
-    public static ResponseSpecification invalidRegistrationResponseSpec = new ResponseSpecBuilder()
+
+    public static ResponseSpecification wrongRegistrationWithoutPasswordResponseSpec = new ResponseSpecBuilder()
             .log(ALL)
             .expectStatusCode(400)
+            .expectBody(matchesJsonSchemaInClasspath(
+                    "schemas/registration/wrong_registration_without_password_response_schema.json"))
+            .expectBody("password", notNullValue())
+            .build();
+
+    public static ResponseSpecification wrongRegistrationWithoutLoginResponseSpec = new ResponseSpecBuilder()
+            .log(ALL)
+            .expectStatusCode(400)
+            .expectBody(matchesJsonSchemaInClasspath(
+                    "schemas/registration/wrong_registration_without_login_response_schema.json"))
+            .expectBody("username", notNullValue())
+            .build();
+
+    public static ResponseSpecification wrongRegistrationWithoutCredentialsResponseSpec = new ResponseSpecBuilder()
+            .log(ALL)
+            .expectStatusCode(400)
+            .expectBody(matchesJsonSchemaInClasspath(
+                    "schemas/registration/wrong_registration_without_credentials_response_schema.json"))
+            .expectBody("username", notNullValue())
+            .expectBody("password", notNullValue())
             .build();
 }
 

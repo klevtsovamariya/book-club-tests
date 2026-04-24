@@ -1,6 +1,8 @@
 .gradle
+gradle/
 build/
-!gradle/wrapper/gradle-wrapper.jar
+allure-results/
+allure-report/
 !**/src/main/**/build/
 !**/src/test/**/build/
 

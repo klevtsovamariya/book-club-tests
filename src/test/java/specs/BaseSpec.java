@@ -14,4 +14,3 @@ public class BaseSpec {
             .contentType(JSON)
             .basePath("/api/v1");
 }
-
