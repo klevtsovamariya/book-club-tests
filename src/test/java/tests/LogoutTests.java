@@ -4,6 +4,7 @@ import models.login.LoginBodyModel;
 import models.logout.LogoutBodyModel;
 import models.logout.LogoutValidationErrorResponseModel;
 import io.qameta.allure.Allure;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -12,8 +13,10 @@ import static tests.TestData.LOGOUT_INVALID_TOKEN_ERROR;
 import static tests.TestData.LOGIN_PASSWORD;
 import static tests.TestData.LOGIN_USERNAME;
 
+@DisplayName("Выход из системы")
 public class LogoutTests extends TestBase {
 
+    @DisplayName("Успешный logout")
     @Test
     public void successfulLogoutTest() {
         LoginBodyModel loginData = new LoginBodyModel(LOGIN_USERNAME, LOGIN_PASSWORD);
@@ -25,6 +28,7 @@ public class LogoutTests extends TestBase {
         api.auth.logout(logoutData);
     }
 
+    @DisplayName("Logout с невалидным refresh token")
     @Test
     public void logoutWithInvalidRefreshTokenTest() {
         LogoutBodyModel logoutData = new LogoutBodyModel("invalid_refresh_token");
@@ -38,6 +42,7 @@ public class LogoutTests extends TestBase {
         assertThat(actualDetailError).isEqualTo(expectedDetailError);
     }
 
+    @DisplayName("Logout без refresh token")
     @Test
     public void logoutWithoutRefreshTokenTest() {
         LogoutBodyModel logoutData = new LogoutBodyModel("");

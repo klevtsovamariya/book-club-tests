@@ -5,13 +5,16 @@ import models.login.LoginValidationErrorResponseModel;
 import models.login.SuccessfulLoginResponseModel;
 import models.login.WrongCredentialsLoginResponseModel;
 import io.qameta.allure.Allure;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static tests.TestData.*;
 
+@DisplayName("Авторизация")
 public class LoginTests extends TestBase {
 
+    @DisplayName("Успешный логин")
     @Test
     public void successfulLoginTest() {
         LoginBodyModel loginData = new LoginBodyModel(LOGIN_USERNAME, LOGIN_PASSWORD);
@@ -27,6 +30,7 @@ public class LoginTests extends TestBase {
         assertThat(actualAccess).isNotEqualTo(actualRefresh);
     }
 
+    @DisplayName("Логин с неверным паролем")
     @Test
     public void wrongCredentialsLoginTest() {
         LoginBodyModel loginData = new LoginBodyModel(LOGIN_USERNAME, LOGIN_WRONG_PASSWORD);
@@ -40,6 +44,7 @@ public class LoginTests extends TestBase {
         assertThat(actualDetailError).isEqualTo(expectedDetailError);
     }
 
+    @DisplayName("Логин без username")
     @Test
     public void withoutLoginTest() {
         LoginBodyModel loginData = new LoginBodyModel("", LOGIN_PASSWORD);
@@ -54,6 +59,7 @@ public class LoginTests extends TestBase {
         assertThat(actualUsernameError).isEqualTo(expectedUsernameError);
     }
 
+    @DisplayName("Логин без password")
     @Test
     public void withoutPasswordLoginTest() {
         LoginBodyModel loginData = new LoginBodyModel(LOGIN_USERNAME, "");

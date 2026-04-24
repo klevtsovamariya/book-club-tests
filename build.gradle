@@ -1,6 +1,6 @@
 plugins {
     id 'java-library'
-    id 'io.qameta.allure' version '2.12.0'
+    id 'io.qameta.allure' version '3.0.2'
     id 'io.freefair.lombok' version "9.2.0"
 
 }
@@ -15,14 +15,13 @@ def restAssuredVersion = "6.0.0",
     slf4jVersion = "2.0.17"
 
 allure {
-    report {
-        version.set(allureVersion)
-    }
+    version = allureVersion
     adapter { // отвечает за появление папочки build/allure-results
-        aspectjWeaver.set(true) //обработка аннотации @Step
+        allureJavaVersion = allureVersion
+        aspectjWeaver = true //обработка аннотации @Step
         frameworks {
             junit5 { //название фреймворка
-                adapterVersion.set(allureVersion) //версия интеграции фреймворка и Allure
+                enabled = true
             }
         }
     }
@@ -36,8 +35,9 @@ dependencies {
             "tools.jackson.core:jackson-databind:3.1.0",
             "net.datafaker:datafaker:2.5.4",
             "org.assertj:assertj-core:3.27.7",
-            "org.junit.jupiter:junit-jupiter:5.14.3",
-            "org.slf4j:slf4j-simple:$slf4jVersion"
+            "org.junit.jupiter:junit-jupiter:$junitVersion",
+            "org.slf4j:slf4j-simple:$slf4jVersion",
+            "net.datafaker:datafaker:2.4.0",
     )
 }
 

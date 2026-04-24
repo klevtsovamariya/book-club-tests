@@ -7,12 +7,14 @@ import models.update.UpdateUserResponseModel;
 import models.update.UpdateUserValidationErrorResponseModel;
 import io.qameta.allure.Allure;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import tests.TestBase;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static tests.TestData.NULL_ERROR;
 
+@DisplayName("PUT обновление пользователя")
 public class UpdateUserPutTests extends TestBase {
     private String username;
     private String password;
@@ -28,6 +30,7 @@ public class UpdateUserPutTests extends TestBase {
         accessToken = api.auth.loginAndGetAccessToken(new LoginBodyModel(username, password));
     }
 
+    @DisplayName("PUT обновляет пользователя всеми полями")
     @Test
     public void putUpdateUserWithAllFieldsTest() {
         UpdateUserPutBodyModel requestBody = new UpdateUserPutBodyModel(
@@ -55,6 +58,7 @@ public class UpdateUserPutTests extends TestBase {
         assertThat(actualEmail).isEqualTo(expectedEmail);
     }
 
+    @DisplayName("PUT без обязательных полей")
     @Test
     public void putUpdateUserWithoutRequiredFieldsTest() {
         UpdateUserPutBodyModel requestBody = new UpdateUserPutBodyModel(

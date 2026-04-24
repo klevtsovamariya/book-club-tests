@@ -6,6 +6,7 @@ import models.registration.RegistrationValidationErrorResponseModel;
 import models.registration.SuccessfulRegistrationResponseModel;
 import io.qameta.allure.Allure;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -13,6 +14,7 @@ import static tests.TestData.EMPTY_ERROR;
 import static tests.TestData.REGISTRATION_EXISTING_USER_ERROR;
 import static tests.TestData.REGISTRATION_IP_REGEXP;
 
+@DisplayName("Регистрация")
 public class RegistrationTests extends TestBase {
 
     String username;
@@ -25,6 +27,7 @@ public class RegistrationTests extends TestBase {
         password = "pass_" + System.currentTimeMillis();
     }
 
+    @DisplayName("Успешная регистрация")
     @Test
     public void successfulRegistrationTest() {
         RegistrationBodyModel registrationData = new RegistrationBodyModel(username, password);
@@ -43,6 +46,7 @@ public class RegistrationTests extends TestBase {
         assertThat(registrationResponse.remoteAddr()).matches(REGISTRATION_IP_REGEXP);
     }
 
+    @DisplayName("Повторная регистрация существующего пользователя")
     @Test
     public void existingUserWrongRegistrationTest() {
         RegistrationBodyModel registrationData = new RegistrationBodyModel(username, password);
@@ -63,6 +67,7 @@ public class RegistrationTests extends TestBase {
         assertThat(actualError).isEqualTo(expectedError);
     }
 
+    @DisplayName("Регистрация без username")
     @Test
     public void registrationWithoutUsernameTest() {
         RegistrationBodyModel registrationData = new RegistrationBodyModel("", password);
@@ -77,6 +82,7 @@ public class RegistrationTests extends TestBase {
         assertThat(actualUsernameError).isEqualTo(expectedUsernameError);
     }
 
+    @DisplayName("Регистрация без password")
     @Test
     public void registrationWithoutPasswordTest() {
         RegistrationBodyModel registrationData = new RegistrationBodyModel(username, "");
@@ -91,6 +97,7 @@ public class RegistrationTests extends TestBase {
         assertThat(actualPasswordError).isEqualTo(expectedPasswordError);
     }
 
+    @DisplayName("Регистрация без username и password")
     @Test
     public void registrationWithoutCredentialsTest() {
         RegistrationBodyModel registrationData = new RegistrationBodyModel("", "");

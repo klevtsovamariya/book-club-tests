@@ -7,6 +7,7 @@ import models.update.UpdateUserResponseModel;
 import models.update.UpdateUserValidationErrorResponseModel;
 import io.qameta.allure.Allure;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import tests.TestBase;
 
@@ -14,6 +15,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static tests.TestData.INVALID_EMAIL_ERROR;
 import static tests.TestData.UNAUTHORIZED_ERROR;
 
+@DisplayName("PATCH обновление пользователя")
 public class UpdateUserPatchTests extends TestBase {
     private String username;
     private String password;
@@ -29,6 +31,7 @@ public class UpdateUserPatchTests extends TestBase {
         accessToken = api.auth.loginAndGetAccessToken(new LoginBodyModel(username, password));
     }
 
+    @DisplayName("PATCH обновляет только firstName")
     @Test
     public void patchUpdateFirstNameOnlyTest() {
         UpdateUserPatchBodyModel requestBody = new UpdateUserPatchBodyModel(
@@ -47,6 +50,7 @@ public class UpdateUserPatchTests extends TestBase {
         assertThat(actualFirstName).isEqualTo(expectedFirstName);
     }
 
+    @DisplayName("PATCH с невалидным email")
     @Test
     public void patchUpdateUserWithInvalidEmailOnlyTest() {
         UpdateUserPatchBodyModel requestBody = new UpdateUserPatchBodyModel(
@@ -66,6 +70,7 @@ public class UpdateUserPatchTests extends TestBase {
         assertThat(actualEmailError).isEqualTo(expectedEmailError);
     }
 
+    @DisplayName("PATCH без авторизации")
     @Test
     public void patchUpdateUserWithoutAuthTest() {
         UpdateUserPatchBodyModel requestBody = new UpdateUserPatchBodyModel(
