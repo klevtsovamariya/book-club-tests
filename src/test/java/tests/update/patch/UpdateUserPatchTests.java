@@ -1,19 +1,18 @@
 package tests.update.patch;
 
+import io.qameta.allure.Allure;
 import models.login.LoginBodyModel;
 import models.registration.RegistrationBodyModel;
 import models.update.UpdateUserPatchBodyModel;
 import models.update.UpdateUserResponseModel;
 import models.update.UpdateUserValidationErrorResponseModel;
-import io.qameta.allure.Allure;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import tests.TestBase;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static tests.TestData.INVALID_EMAIL_ERROR;
-import static tests.TestData.UNAUTHORIZED_ERROR;
+import static tests.TestData.*;
 
 @DisplayName("PATCH обновление пользователя")
 public class UpdateUserPatchTests extends TestBase {
@@ -41,13 +40,13 @@ public class UpdateUserPatchTests extends TestBase {
                 ""
         );
 
-        Allure.step("Отправить PATCH-запрос на частичное обновление");
-        UpdateUserResponseModel response = api.users.updateUserPatch(accessToken, requestBody);
+        UpdateUserResponseModel response = Allure.step(
+                "Отправить PATCH-запрос на частичное обновление",
+                () -> api.users.updateUserPatch(accessToken, requestBody)
+        );
 
-        String expectedFirstName = requestBody.firstName();
-        String actualFirstName = response.firstName();
         Allure.step("Проверить, что изменилось только firstName");
-        assertThat(actualFirstName).isEqualTo(expectedFirstName);
+        assertThat(response.firstName()).isEqualTo(requestBody.firstName());
     }
 
     @DisplayName("PATCH с невалидным email")
@@ -60,14 +59,14 @@ public class UpdateUserPatchTests extends TestBase {
                 "wrong!"
         );
 
-        Allure.step("Отправить PATCH-запрос с невалидным email");
-        UpdateUserValidationErrorResponseModel response = api.users.updateUserPatchInvalid(accessToken, requestBody);
+        UpdateUserValidationErrorResponseModel response = Allure.step(
+                "Отправить PATCH-запрос с невалидным email",
+                () -> api.users.updateUserPatchInvalid(accessToken, requestBody)
+        );
 
-        String expectedEmailError = INVALID_EMAIL_ERROR;
         assertThat(response.email()).isNotNull().isNotEmpty();
         Allure.step("Проверить текст ошибки email");
-        String actualEmailError = response.email().get(0);
-        assertThat(actualEmailError).isEqualTo(expectedEmailError);
+        assertThat(response.email().get(0)).isEqualTo(INVALID_EMAIL_ERROR);
     }
 
     @DisplayName("PATCH без авторизации")
@@ -80,12 +79,12 @@ public class UpdateUserPatchTests extends TestBase {
                 ""
         );
 
-        Allure.step("Отправить PATCH-запрос без авторизации");
-        UpdateUserValidationErrorResponseModel response = api.users.updateUserPatchUnauthorized(requestBody);
+        UpdateUserValidationErrorResponseModel response = Allure.step(
+                "Отправить PATCH-запрос без авторизации",
+                () -> api.users.updateUserPatchUnauthorized(requestBody)
+        );
 
-        String expectedDetailError = UNAUTHORIZED_ERROR;
         Allure.step("Проверить текст ошибки отсутствия авторизации");
-        String actualDetailError = response.detail();
-        assertThat(actualDetailError).isEqualTo(expectedDetailError);
+        assertThat(response.detail()).isEqualTo(UNAUTHORIZED_ERROR);
     }
 }
