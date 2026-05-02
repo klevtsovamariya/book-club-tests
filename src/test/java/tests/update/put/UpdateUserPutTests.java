@@ -1,6 +1,5 @@
 package tests.update.put;
 
-import io.qameta.allure.Allure;
 import models.login.LoginBodyModel;
 import models.registration.RegistrationBodyModel;
 import models.update.UpdateUserPutBodyModel;
@@ -11,6 +10,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import tests.TestBase;
 
+import static io.qameta.allure.Allure.step;
 import static org.assertj.core.api.Assertions.assertThat;
 import static tests.TestData.*;
 
@@ -41,16 +41,17 @@ public class UpdateUserPutTests extends TestBase {
         );
 
 
-        UpdateUserResponseModel response = Allure.step(
+        UpdateUserResponseModel response = step(
                 "Отправить PUT-запрос на полное обновление",
                 () -> api.users.updateUserPut(accessToken, requestBody)
         );
 
-        Allure.step("Проверить, что все поля обновились");
-        assertThat(response.username()).isEqualTo(requestBody.username());
-        assertThat(response.firstName()).isEqualTo(requestBody.firstName());
-        assertThat(response.lastName()).isEqualTo(requestBody.lastName());
-        assertThat(response.email()).isEqualTo(requestBody.email());
+        step("Проверить, что все поля обновились", () -> {
+            assertThat(response.username()).isEqualTo(requestBody.username());
+            assertThat(response.firstName()).isEqualTo(requestBody.firstName());
+            assertThat(response.lastName()).isEqualTo(requestBody.lastName());
+            assertThat(response.email()).isEqualTo(requestBody.email());
+        });
     }
 
     @DisplayName("PUT без обязательных полей")
@@ -64,18 +65,19 @@ public class UpdateUserPutTests extends TestBase {
         );
 
 
-        UpdateUserValidationErrorResponseModel response = Allure.step(
+        UpdateUserValidationErrorResponseModel response = step(
                 "Отправить PUT-запрос с пустыми обязательными полями",
                 () -> api.users.updateUserPutInvalid(accessToken, requestBody)
         );
 
-        Allure.step("Проверить ошибки обязательных полей");
-        assertThat(response.username()).isNotNull().isNotEmpty();
-        assertThat(response.username().get(0)).isEqualTo(NULL_ERROR);
-        assertThat(response.firstName()).isNull();
-        assertThat(response.lastName()).isNotNull().isNotEmpty();
-        assertThat(response.lastName().get(0)).isEqualTo(NULL_ERROR);
-        assertThat(response.email()).isNotNull().isNotEmpty();
-        assertThat(response.email().get(0)).isEqualTo(NULL_ERROR);
+        step("Проверить ошибки обязательных полей", () -> {
+            assertThat(response.username()).isNotNull().isNotEmpty();
+            assertThat(response.username().get(0)).isEqualTo(NULL_ERROR);
+            assertThat(response.firstName()).isNull();
+            assertThat(response.lastName()).isNotNull().isNotEmpty();
+            assertThat(response.lastName().get(0)).isEqualTo(NULL_ERROR);
+            assertThat(response.email()).isNotNull().isNotEmpty();
+            assertThat(response.email().get(0)).isEqualTo(NULL_ERROR);
+        });
     }
 }

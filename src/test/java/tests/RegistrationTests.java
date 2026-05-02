@@ -1,6 +1,5 @@
 package tests;
 
-import io.qameta.allure.Allure;
 import models.registration.ExistingUserResponseModel;
 import models.registration.RegistrationBodyModel;
 import models.registration.RegistrationValidationErrorResponseModel;
@@ -9,6 +8,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import static io.qameta.allure.Allure.step;
 import static org.assertj.core.api.Assertions.assertThat;
 import static tests.TestData.*;
 
@@ -30,18 +30,19 @@ public class RegistrationTests extends TestBase {
     public void successfulRegistrationTest() {
         RegistrationBodyModel registrationData = new RegistrationBodyModel(username, password);
 
-        SuccessfulRegistrationResponseModel registrationResponse = Allure.step(
+        SuccessfulRegistrationResponseModel registrationResponse = step(
                 "Отправить запрос на регистрацию",
                 () -> api.users.register(registrationData)
         );
 
-        Allure.step("Проверить поля успешного ответа");
-        assertThat(registrationResponse.id()).isGreaterThan(0);
-        assertThat(registrationResponse.username()).isEqualTo(username);
-        assertThat(registrationResponse.firstName()).isEqualTo("");
-        assertThat(registrationResponse.lastName()).isEqualTo("");
-        assertThat(registrationResponse.email()).isEqualTo("");
-        assertThat(registrationResponse.remoteAddr()).matches(REGISTRATION_IP_REGEXP);
+        step("Проверить поля успешного ответа", () -> {
+            assertThat(registrationResponse.id()).isGreaterThan(0);
+            assertThat(registrationResponse.username()).isEqualTo(username);
+            assertThat(registrationResponse.firstName()).isEqualTo("");
+            assertThat(registrationResponse.lastName()).isEqualTo("");
+            assertThat(registrationResponse.email()).isEqualTo("");
+            assertThat(registrationResponse.remoteAddr()).matches(REGISTRATION_IP_REGEXP);
+        });
     }
 
     @DisplayName("Повторная регистрация существующего пользователя")
@@ -49,20 +50,23 @@ public class RegistrationTests extends TestBase {
     public void existingUserWrongRegistrationTest() {
         RegistrationBodyModel registrationData = new RegistrationBodyModel(username, password);
 
-        SuccessfulRegistrationResponseModel firstRegistrationResponse = Allure.step(
+        SuccessfulRegistrationResponseModel firstRegistrationResponse = step(
                 "Зарегистрировать пользователя",
                 () -> api.users.register(registrationData)
         );
 
-        assertThat(firstRegistrationResponse.username()).isEqualTo(username);
+        step("Проверить, что первый пользователь зарегистрирован", () -> {
+            assertThat(firstRegistrationResponse.username()).isEqualTo(username);
+        });
 
-        ExistingUserResponseModel secondRegistrationResponse = Allure.step(
+        ExistingUserResponseModel secondRegistrationResponse = step(
                 "Повторно отправить регистрацию с теми же данными",
                 () -> api.users.registerExistingUser(registrationData)
         );
 
-        Allure.step("Проверить текст ошибки существующего пользователя");
-        assertThat(secondRegistrationResponse.username().get(0)).isEqualTo(REGISTRATION_EXISTING_USER_ERROR);
+        step("Проверить текст ошибки существующего пользователя", () -> {
+            assertThat(secondRegistrationResponse.username().get(0)).isEqualTo(REGISTRATION_EXISTING_USER_ERROR);
+        });
     }
 
     @DisplayName("Регистрация без username")
@@ -70,14 +74,15 @@ public class RegistrationTests extends TestBase {
     public void registrationWithoutUsernameTest() {
         RegistrationBodyModel registrationData = new RegistrationBodyModel("", password);
 
-        RegistrationValidationErrorResponseModel response = Allure.step(
+        RegistrationValidationErrorResponseModel response = step(
                 "Отправить регистрацию без username",
                 () -> api.users.registerWithoutUsername(registrationData)
         );
 
-        Allure.step("Проверить ошибку username");
-        assertThat(response.username()).isNotNull().isNotEmpty();
-        assertThat(response.username().get(0)).isEqualTo(EMPTY_ERROR);
+        step("Проверить ошибку username", () -> {
+            assertThat(response.username()).isNotNull().isNotEmpty();
+            assertThat(response.username().get(0)).isEqualTo(EMPTY_ERROR);
+        });
     }
 
     @DisplayName("Регистрация без password")
@@ -85,14 +90,15 @@ public class RegistrationTests extends TestBase {
     public void registrationWithoutPasswordTest() {
         RegistrationBodyModel registrationData = new RegistrationBodyModel(username, "");
 
-        RegistrationValidationErrorResponseModel response = Allure.step(
+        RegistrationValidationErrorResponseModel response = step(
                 "Отправить регистрацию без password",
                 () -> api.users.registerWithoutPassword(registrationData)
         );
 
-        Allure.step("Проверить ошибку password");
-        assertThat(response.password()).isNotNull().isNotEmpty();
-        assertThat(response.password().get(0)).isEqualTo(EMPTY_ERROR);
+        step("Проверить ошибку password", () -> {
+            assertThat(response.password()).isNotNull().isNotEmpty();
+            assertThat(response.password().get(0)).isEqualTo(EMPTY_ERROR);
+        });
     }
 
     @DisplayName("Регистрация без username и password")
@@ -100,15 +106,16 @@ public class RegistrationTests extends TestBase {
     public void registrationWithoutCredentialsTest() {
         RegistrationBodyModel registrationData = new RegistrationBodyModel("", "");
 
-        RegistrationValidationErrorResponseModel response = Allure.step(
+        RegistrationValidationErrorResponseModel response = step(
                 "Отправить регистрацию без username и password",
                 () -> api.users.registerWithoutCredentials(registrationData)
         );
 
-        Allure.step("Проверить ошибки обоих обязательных полей");
-        assertThat(response.username()).isNotNull().isNotEmpty();
-        assertThat(response.username().get(0)).isEqualTo(EMPTY_ERROR);
-        assertThat(response.password()).isNotNull().isNotEmpty();
-        assertThat(response.password().get(0)).isEqualTo(EMPTY_ERROR);
+        step("Проверить ошибки обоих обязательных полей", () -> {
+            assertThat(response.username()).isNotNull().isNotEmpty();
+            assertThat(response.username().get(0)).isEqualTo(EMPTY_ERROR);
+            assertThat(response.password()).isNotNull().isNotEmpty();
+            assertThat(response.password().get(0)).isEqualTo(EMPTY_ERROR);
+        });
     }
 }

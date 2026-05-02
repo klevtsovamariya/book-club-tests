@@ -1,12 +1,12 @@
 package tests;
 
-import io.qameta.allure.Allure;
 import models.login.LoginBodyModel;
 import models.logout.LogoutBodyModel;
 import models.logout.LogoutValidationErrorResponseModel;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import static io.qameta.allure.Allure.step;
 import static org.assertj.core.api.Assertions.assertThat;
 import static tests.TestData.*;
 
@@ -17,13 +17,13 @@ public class LogoutTests extends TestBase {
     @Test
     public void successfulLogoutTest() {
         LoginBodyModel loginData = new LoginBodyModel(LOGIN_USERNAME, LOGIN_PASSWORD);
-        String refreshToken = Allure.step(
+        String refreshToken = step(
                 "Получить refresh token через логин",
                 () -> api.auth.loginAndGetRefreshToken(loginData)
         );
 
         LogoutBodyModel logoutData = new LogoutBodyModel(refreshToken);
-        Allure.step("Отправить logout с валидным refresh token", () -> {
+        step("Отправить logout с валидным refresh token", () -> {
             api.auth.logout(logoutData);
         });
     }
@@ -33,13 +33,14 @@ public class LogoutTests extends TestBase {
     public void logoutWithInvalidRefreshTokenTest() {
         LogoutBodyModel logoutData = new LogoutBodyModel("invalid_refresh_token");
 
-        LogoutValidationErrorResponseModel response = Allure.step(
+        LogoutValidationErrorResponseModel response = step(
                 "Отправить logout с невалидным refresh token",
                 () -> api.auth.logoutUnauthorized(logoutData)
         );
 
-        Allure.step("Проверить текст ошибки token_not_valid");
-        assertThat(response.detail()).isEqualTo(LOGOUT_INVALID_TOKEN_ERROR);
+        step("Проверить текст ошибки token_not_valid", () -> {
+            assertThat(response.detail()).isEqualTo(LOGOUT_INVALID_TOKEN_ERROR);
+        });
     }
 
     @DisplayName("Logout без refresh token")
@@ -47,13 +48,14 @@ public class LogoutTests extends TestBase {
     public void logoutWithoutRefreshTokenTest() {
         LogoutBodyModel logoutData = new LogoutBodyModel("");
 
-        LogoutValidationErrorResponseModel response = Allure.step(
+        LogoutValidationErrorResponseModel response = step(
                 "Отправить logout без refresh token",
                 () -> api.auth.logoutInvalid(logoutData)
         );
 
-        Allure.step("Проверить ошибку обязательного поля refresh");
-        assertThat(response.refresh()).isNotNull().isNotEmpty();
-        assertThat(response.refresh().get(0)).isEqualTo(EMPTY_ERROR);
+        step("Проверить ошибку обязательного поля refresh", () -> {
+            assertThat(response.refresh()).isNotNull().isNotEmpty();
+            assertThat(response.refresh().get(0)).isEqualTo(EMPTY_ERROR);
+        });
     }
 }
