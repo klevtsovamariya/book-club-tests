@@ -19,10 +19,7 @@ public class LoginTests extends TestBase {
     public void successfulLoginTest() {
         LoginBodyModel loginData = new LoginBodyModel(LOGIN_USERNAME, LOGIN_PASSWORD);
 
-        SuccessfulLoginResponseModel loginResponse = step(
-                "Отправить запрос на успешный логин",
-                () -> api.auth.login(loginData)
-        );
+        SuccessfulLoginResponseModel loginResponse = api.auth.login(loginData);
 
         step("Проверить, что токены получены и отличаются", () -> {
             assertThat(loginResponse.access()).startsWith(LOGIN_TOKEN_PREFIX);
@@ -36,10 +33,7 @@ public class LoginTests extends TestBase {
     public void wrongCredentialsLoginTest() {
         LoginBodyModel loginData = new LoginBodyModel(LOGIN_USERNAME, LOGIN_WRONG_PASSWORD);
 
-        WrongCredentialsLoginResponseModel loginResponse = step(
-                "Отправить запрос с неверным паролем",
-                () -> api.auth.loginWrongCredentials(loginData)
-        );
+        WrongCredentialsLoginResponseModel loginResponse = api.auth.loginWrongCredentials(loginData);
 
         step("Проверить текст ошибки авторизации", () -> {
             assertThat(loginResponse.detail()).isEqualTo(LOGIN_WRONG_CREDENTIALS_ERROR);
@@ -51,10 +45,7 @@ public class LoginTests extends TestBase {
     public void withoutLoginTest() {
         LoginBodyModel loginData = new LoginBodyModel("", LOGIN_PASSWORD);
 
-        LoginValidationErrorResponseModel loginResponse = step(
-                "Отправить запрос без username",
-                () -> api.auth.loginWithoutUsername(loginData)
-        );
+        LoginValidationErrorResponseModel loginResponse = api.auth.loginWithoutUsername(loginData);
 
         step("Проверить ошибку в поле username", () -> {
             assertThat(loginResponse.username()).isNotNull().isNotEmpty();
@@ -67,10 +58,7 @@ public class LoginTests extends TestBase {
     public void withoutPasswordLoginTest() {
         LoginBodyModel loginData = new LoginBodyModel(LOGIN_USERNAME, "");
 
-        LoginValidationErrorResponseModel loginResponse = step(
-                "Отправить запрос без password",
-                () -> api.auth.loginWithoutPassword(loginData)
-        );
+        LoginValidationErrorResponseModel loginResponse = api.auth.loginWithoutPassword(loginData);
 
         step("Проверить ошибку в поле password", () -> {
             assertThat(loginResponse.password()).isNotNull().isNotEmpty();

@@ -93,7 +93,7 @@ public class AuthApiClient {
                 .as(LoginValidationErrorResponseModel.class);
     }
 
-    @Step("Отправка запроса logout")
+    @Step("Logout с валидным refresh токеном")
     public void logout(LogoutBodyModel logoutBody) {
         given(logoutRequestSpec)
                 .body(logoutBody)
@@ -103,7 +103,7 @@ public class AuthApiClient {
                 .spec(successfulLogoutResponseSpec);
     }
 
-    @Step("Негативный logout запрос")
+    @Step("Logout без refresh токена")
     public LogoutValidationErrorResponseModel logoutInvalid(LogoutBodyModel logoutBody) {
         return given(logoutRequestSpec)
                 .body(logoutBody)

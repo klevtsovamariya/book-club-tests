@@ -26,7 +26,7 @@ public class UpdateUserPatchTests extends TestBase {
         password = "upd_pass_" + System.currentTimeMillis();
 
         RegistrationBodyModel registrationData = new RegistrationBodyModel(username, password);
-        api.users.register(registrationData);
+        api.registration.register(registrationData);
         accessToken = api.auth.loginAndGetAccessToken(new LoginBodyModel(username, password));
     }
 
@@ -40,10 +40,7 @@ public class UpdateUserPatchTests extends TestBase {
                 ""
         );
 
-        UpdateUserResponseModel response = step(
-                "Отправить PATCH-запрос на частичное обновление",
-                () -> api.users.updateUserPatch(accessToken, requestBody)
-        );
+        UpdateUserResponseModel response = api.updateUser.updateUserPatch(accessToken, requestBody);
 
         step("Проверить, что изменилось только firstName", () -> {
             assertThat(response.firstName()).isEqualTo(requestBody.firstName());
@@ -60,10 +57,7 @@ public class UpdateUserPatchTests extends TestBase {
                 "wrong!"
         );
 
-        UpdateUserValidationErrorResponseModel response = step(
-                "Отправить PATCH-запрос с невалидным email",
-                () -> api.users.updateUserPatchInvalid(accessToken, requestBody)
-        );
+        UpdateUserValidationErrorResponseModel response = api.updateUser.updateUserPatchInvalid(accessToken, requestBody);
 
         step("Проверить текст ошибки email", () -> {
             assertThat(response.email()).isNotNull().isNotEmpty();
@@ -81,10 +75,7 @@ public class UpdateUserPatchTests extends TestBase {
                 ""
         );
 
-        UpdateUserValidationErrorResponseModel response = step(
-                "Отправить PATCH-запрос без авторизации",
-                () -> api.users.updateUserPatchUnauthorized(requestBody)
-        );
+        UpdateUserValidationErrorResponseModel response = api.updateUser.updateUserPatchUnauthorized(requestBody);
 
         step("Проверить текст ошибки отсутствия авторизации", () -> {
             assertThat(response.detail()).isEqualTo(UNAUTHORIZED_ERROR);

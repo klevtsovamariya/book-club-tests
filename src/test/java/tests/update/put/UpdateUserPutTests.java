@@ -26,7 +26,7 @@ public class UpdateUserPutTests extends TestBase {
         password = "upd_pass_" + System.currentTimeMillis();
 
         RegistrationBodyModel registrationData = new RegistrationBodyModel(username, password);
-        api.users.register(registrationData);
+        api.registration.register(registrationData);
         accessToken = api.auth.loginAndGetAccessToken(new LoginBodyModel(username, password));
     }
 
@@ -41,10 +41,7 @@ public class UpdateUserPutTests extends TestBase {
         );
 
 
-        UpdateUserResponseModel response = step(
-                "Отправить PUT-запрос на полное обновление",
-                () -> api.users.updateUserPut(accessToken, requestBody)
-        );
+        UpdateUserResponseModel response = api.updateUser.updateUserPut(accessToken, requestBody);
 
         step("Проверить, что все поля обновились", () -> {
             assertThat(response.username()).isEqualTo(requestBody.username());
@@ -65,10 +62,7 @@ public class UpdateUserPutTests extends TestBase {
         );
 
 
-        UpdateUserValidationErrorResponseModel response = step(
-                "Отправить PUT-запрос с пустыми обязательными полями",
-                () -> api.users.updateUserPutInvalid(accessToken, requestBody)
-        );
+        UpdateUserValidationErrorResponseModel response = api.updateUser.updateUserPutInvalid(accessToken, requestBody);
 
         step("Проверить ошибки обязательных полей", () -> {
             assertThat(response.username()).isNotNull().isNotEmpty();
