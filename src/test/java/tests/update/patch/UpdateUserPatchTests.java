@@ -40,7 +40,7 @@ public class UpdateUserPatchTests extends TestBase {
                 ""
         );
 
-        UpdateUserResponseModel response = api.updateUser.updateUserPatch(accessToken, requestBody);
+        UpdateUserResponseModel response = api.users.updateUserPatch(accessToken, requestBody);
 
         step("Проверить, что изменилось только firstName", () -> {
             assertThat(response.firstName()).isEqualTo(requestBody.firstName());
@@ -57,7 +57,7 @@ public class UpdateUserPatchTests extends TestBase {
                 "wrong!"
         );
 
-        UpdateUserValidationErrorResponseModel response = api.updateUser.updateUserPatchInvalid(accessToken, requestBody);
+        UpdateUserValidationErrorResponseModel response = api.users.updateUserPatchInvalid(accessToken, requestBody);
 
         step("Проверить текст ошибки email", () -> {
             assertThat(response.email()).isNotNull().isNotEmpty();
@@ -75,7 +75,7 @@ public class UpdateUserPatchTests extends TestBase {
                 ""
         );
 
-        UpdateUserValidationErrorResponseModel response = api.updateUser.updateUserPatchUnauthorized(requestBody);
+        UpdateUserValidationErrorResponseModel response = api.users.updateUserPatchUnauthorized(requestBody);
 
         step("Проверить текст ошибки отсутствия авторизации", () -> {
             assertThat(response.detail()).isEqualTo(UNAUTHORIZED_ERROR);

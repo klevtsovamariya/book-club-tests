@@ -1,5 +1,7 @@
 package tests;
 
+import models.club.ClubBodyModel;
+
 public class TestData {
 
     public static final String LOGIN_USERNAME = "user8";
@@ -20,4 +22,16 @@ public class TestData {
     public static final String REGISTRATION_IP_REGEXP =
             "^((25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)\\.){3}"
                     + "(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)$";
+
+    public static ClubBodyModel createClubData(String marker) {
+        long suffix = System.currentTimeMillis();
+
+        return new ClubBodyModel(
+                "Book " + marker + " " + suffix,
+                "Author " + marker,
+                2026,
+                "Description " + marker,
+                "https://t.me/bookclub" + suffix
+        );
+    }
 }

@@ -7,7 +7,6 @@ import models.registration.SuccessfulRegistrationResponseModel;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInfo;
 
 import static io.qameta.allure.Allure.step;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -21,14 +20,10 @@ public class RegistrationTests extends TestBase {
     RegistrationBodyModel registrationData;
 
     @BeforeEach
-    public void prepareTestData(TestInfo testInfo) {
+    public void prepareTestData() {
         username = "user_" + System.currentTimeMillis();
         password = "pass_" + System.currentTimeMillis();
         registrationData = new RegistrationBodyModel(username, password);
-
-        testInfo.getTestMethod()
-                .filter(method -> method.getName().equals("existingUserWrongRegistrationTest"))
-                .ifPresent(method -> api.registration.register(registrationData));
     }
 
     @DisplayName("Успешная регистрация")
@@ -49,6 +44,8 @@ public class RegistrationTests extends TestBase {
     @DisplayName("Повторная регистрация существующего пользователя")
     @Test
     public void existingUserWrongRegistrationTest() {
+        api.registration.register(registrationData);
+
         ExistingUserResponseModel secondRegistrationResponse = api.registration.registerExistingUser(registrationData);
 
         step("Проверить текст ошибки существующего пользователя", () -> {

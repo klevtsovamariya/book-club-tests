@@ -13,8 +13,8 @@ import static specs.updateuser.UpdateUserSpec.successfulUpdateUserResponseSpec;
 import static specs.updateuser.UpdateUserSpec.unauthorizedUpdateUserResponseSpec;
 import static specs.updateuser.UpdateUserSpec.updateUserRequestSpec;
 
-public class UpdateUserApiClient {
-    private static final String UPDATE_USER_ENDPOINT = "/users/me/";
+public class UsersApiClient {
+    private static final String USERS_ME_ENDPOINT = "/users/me/";
 
     @Step("Обновление профиля пользователя через PUT")
     public UpdateUserResponseModel updateUserPut(String accessToken, UpdateUserPutBodyModel body) {
@@ -22,7 +22,7 @@ public class UpdateUserApiClient {
                 .header("Authorization", "Bearer " + accessToken)
                 .body(body)
                 .when()
-                .put(UPDATE_USER_ENDPOINT)
+                .put(USERS_ME_ENDPOINT)
                 .then()
                 .spec(successfulUpdateUserResponseSpec)
                 .extract()
@@ -35,7 +35,7 @@ public class UpdateUserApiClient {
                 .header("Authorization", "Bearer " + accessToken)
                 .body(body)
                 .when()
-                .patch(UPDATE_USER_ENDPOINT)
+                .patch(USERS_ME_ENDPOINT)
                 .then()
                 .spec(successfulUpdateUserResponseSpec)
                 .extract()
@@ -48,7 +48,7 @@ public class UpdateUserApiClient {
                 .header("Authorization", "Bearer " + accessToken)
                 .body(body)
                 .when()
-                .put(UPDATE_USER_ENDPOINT)
+                .put(USERS_ME_ENDPOINT)
                 .then()
                 .spec(invalidPutUpdateUserResponseSpec)
                 .extract()
@@ -61,7 +61,7 @@ public class UpdateUserApiClient {
                 .header("Authorization", "Bearer " + accessToken)
                 .body(body)
                 .when()
-                .patch(UPDATE_USER_ENDPOINT)
+                .patch(USERS_ME_ENDPOINT)
                 .then()
                 .spec(invalidPatchUpdateUserResponseSpec)
                 .extract()
@@ -73,7 +73,7 @@ public class UpdateUserApiClient {
         return given(updateUserRequestSpec)
                 .body(body)
                 .when()
-                .patch(UPDATE_USER_ENDPOINT)
+                .patch(USERS_ME_ENDPOINT)
                 .then()
                 .spec(unauthorizedUpdateUserResponseSpec)
                 .extract()

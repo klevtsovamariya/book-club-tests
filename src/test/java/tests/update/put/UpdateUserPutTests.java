@@ -41,7 +41,7 @@ public class UpdateUserPutTests extends TestBase {
         );
 
 
-        UpdateUserResponseModel response = api.updateUser.updateUserPut(accessToken, requestBody);
+        UpdateUserResponseModel response = api.users.updateUserPut(accessToken, requestBody);
 
         step("Проверить, что все поля обновились", () -> {
             assertThat(response.username()).isEqualTo(requestBody.username());
@@ -62,7 +62,7 @@ public class UpdateUserPutTests extends TestBase {
         );
 
 
-        UpdateUserValidationErrorResponseModel response = api.updateUser.updateUserPutInvalid(accessToken, requestBody);
+        UpdateUserValidationErrorResponseModel response = api.users.updateUserPutInvalid(accessToken, requestBody);
 
         step("Проверить ошибки обязательных полей", () -> {
             assertThat(response.username()).isNotNull().isNotEmpty();
