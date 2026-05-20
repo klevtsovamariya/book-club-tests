@@ -3,7 +3,7 @@ package api;
 public class ApiClient {
 
     public final AuthApiClient auth = new AuthApiClient();
-    public final RegistrationApiClient registration = new RegistrationApiClient();
     public final UsersApiClient users = new UsersApiClient();
     public final ClubsApiClient clubs = new ClubsApiClient();
+    public final ClubReviewsApiClient reviews = new ClubReviewsApiClient();
 }

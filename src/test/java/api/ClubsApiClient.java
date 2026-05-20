@@ -1,23 +1,26 @@
 package api;
 
 import io.qameta.allure.Step;
+import models.ErrorResponseModel;
 import models.club.ClubBodyModel;
 import models.club.ClubListResponseModel;
 import models.club.ClubPatchBodyModel;
 import models.club.ClubResponseModel;
-import models.club.ClubReviewListResponseModel;
+import net.datafaker.Faker;
 
 import static io.restassured.RestAssured.given;
 import static specs.club.ClubSpec.clubRequestSpec;
+import static specs.club.ClubSpec.forbiddenClubResponseSpec;
 import static specs.club.ClubSpec.notFoundClubResponseSpec;
 import static specs.club.ClubSpec.successfulClubListResponseSpec;
 import static specs.club.ClubSpec.successfulClubMembershipResponseSpec;
 import static specs.club.ClubSpec.successfulClubResponseSpec;
-import static specs.club.ClubSpec.successfulClubReviewListResponseSpec;
 import static specs.club.ClubSpec.successfulCreateClubResponseSpec;
 import static specs.club.ClubSpec.successfulDeleteClubResponseSpec;
+import static specs.club.ClubSpec.unauthorizedClubResponseSpec;
 
 public class ClubsApiClient {
+    private static final String CLUBS_ENDPOINT = "/clubs/";
 
     @Step("Создание клуба")
     public ClubResponseModel createClub(String accessToken, ClubBodyModel body) {
@@ -25,18 +28,44 @@ public class ClubsApiClient {
                 .header("Authorization", "Bearer " + accessToken)
                 .body(body)
                 .when()
-                .post("/clubs/")
+                .post(CLUBS_ENDPOINT)
                 .then()
                 .spec(successfulCreateClubResponseSpec)
                 .extract()
                 .as(ClubResponseModel.class);
     }
 
+    @Step("[API] Создание случайного клуба POST /clubs/")
+    public ClubResponseModel createRandomClub(String accessToken) {
+        Faker faker = new Faker();
+        ClubBodyModel body = new ClubBodyModel(
+                "API Club " + faker.book().title(),
+                faker.book().author(),
+                faker.number().numberBetween(1950, 2027),
+                faker.lorem().sentence(),
+                "https://t.me/qa_guru_" + faker.internet().uuid().replace("-", "")
+        );
+
+        return createClub(accessToken, body);
+    }
+
+    @Step("Создание клуба без авторизации")
+    public ErrorResponseModel createClubUnauthorized(ClubBodyModel body) {
+        return given(clubRequestSpec)
+                .body(body)
+                .when()
+                .post(CLUBS_ENDPOINT)
+                .then()
+                .spec(unauthorizedClubResponseSpec)
+                .extract()
+                .as(ErrorResponseModel.class);
+    }
+
     @Step("Получение клуба по id")
     public ClubResponseModel getClubById(Integer clubId) {
         return given(clubRequestSpec)
                 .when()
-                .get("/clubs/" + clubId + "/")
+                .get(CLUBS_ENDPOINT + clubId + "/")
                 .then()
                 .spec(successfulClubResponseSpec)
                 .extract()
@@ -47,23 +76,26 @@ public class ClubsApiClient {
     public ClubListResponseModel getClubs() {
         return given(clubRequestSpec)
                 .when()
-                .get("/clubs/")
+                .get(CLUBS_ENDPOINT)
                 .then()
                 .spec(successfulClubListResponseSpec)
                 .extract()
                 .as(ClubListResponseModel.class);
     }
 
-    @Step("Получение списка отзывов клуба")
-    public ClubReviewListResponseModel getClubReviews(Integer clubId) {
+    @Step("Получение списка клубов с параметрами")
+    public ClubListResponseModel getClubs(String membership, Integer page, Integer pageSize, String search) {
         return given(clubRequestSpec)
-                .queryParam("club", clubId)
+                .queryParam("membership", membership)
+                .queryParam("page", page)
+                .queryParam("page_size", pageSize)
+                .queryParam("search", search)
                 .when()
-                .get("/clubs/reviews/")
+                .get(CLUBS_ENDPOINT)
                 .then()
-                .spec(successfulClubReviewListResponseSpec)
+                .spec(successfulClubListResponseSpec)
                 .extract()
-                .as(ClubReviewListResponseModel.class);
+                .as(ClubListResponseModel.class);
     }
 
     @Step("Полное обновление клуба через PUT")
@@ -72,11 +104,36 @@ public class ClubsApiClient {
                 .header("Authorization", "Bearer " + accessToken)
                 .body(body)
                 .when()
-                .put("/clubs/" + clubId + "/")
+                .put(CLUBS_ENDPOINT + clubId + "/")
                 .then()
                 .spec(successfulClubResponseSpec)
                 .extract()
                 .as(ClubResponseModel.class);
+    }
+
+    @Step("Полное обновление клуба без авторизации")
+    public ErrorResponseModel updateClubPutUnauthorized(Integer clubId, ClubBodyModel body) {
+        return given(clubRequestSpec)
+                .body(body)
+                .when()
+                .put(CLUBS_ENDPOINT + clubId + "/")
+                .then()
+                .spec(unauthorizedClubResponseSpec)
+                .extract()
+                .as(ErrorResponseModel.class);
+    }
+
+    @Step("Полное обновление клуба чужим пользователем")
+    public ErrorResponseModel updateClubPutForbidden(String accessToken, Integer clubId, ClubBodyModel body) {
+        return given(clubRequestSpec)
+                .header("Authorization", "Bearer " + accessToken)
+                .body(body)
+                .when()
+                .put(CLUBS_ENDPOINT + clubId + "/")
+                .then()
+                .spec(forbiddenClubResponseSpec)
+                .extract()
+                .as(ErrorResponseModel.class);
     }
 
     @Step("Частичное обновление клуба через PATCH")
@@ -85,7 +142,7 @@ public class ClubsApiClient {
                 .header("Authorization", "Bearer " + accessToken)
                 .body(body)
                 .when()
-                .patch("/clubs/" + clubId + "/")
+                .patch(CLUBS_ENDPOINT + clubId + "/")
                 .then()
                 .spec(successfulClubResponseSpec)
                 .extract()
@@ -97,9 +154,32 @@ public class ClubsApiClient {
         given(clubRequestSpec)
                 .header("Authorization", "Bearer " + accessToken)
                 .when()
-                .delete("/clubs/" + clubId + "/")
+                .delete(CLUBS_ENDPOINT + clubId + "/")
                 .then()
                 .spec(successfulDeleteClubResponseSpec);
+    }
+
+    @Step("Удаление клуба без авторизации")
+    public ErrorResponseModel deleteClubUnauthorized(Integer clubId) {
+        return given(clubRequestSpec)
+                .when()
+                .delete(CLUBS_ENDPOINT + clubId + "/")
+                .then()
+                .spec(unauthorizedClubResponseSpec)
+                .extract()
+                .as(ErrorResponseModel.class);
+    }
+
+    @Step("Удаление клуба чужим пользователем")
+    public ErrorResponseModel deleteClubForbidden(String accessToken, Integer clubId) {
+        return given(clubRequestSpec)
+                .header("Authorization", "Bearer " + accessToken)
+                .when()
+                .delete(CLUBS_ENDPOINT + clubId + "/")
+                .then()
+                .spec(forbiddenClubResponseSpec)
+                .extract()
+                .as(ErrorResponseModel.class);
     }
 
     @Step("Вступление текущего пользователя в клуб")
@@ -107,7 +187,7 @@ public class ClubsApiClient {
         given(clubRequestSpec)
                 .header("Authorization", "Bearer " + accessToken)
                 .when()
-                .post("/clubs/" + clubId + "/members/me/")
+                .post(CLUBS_ENDPOINT + clubId + "/members/me/")
                 .then()
                 .spec(successfulClubMembershipResponseSpec);
     }
@@ -117,17 +197,19 @@ public class ClubsApiClient {
         given(clubRequestSpec)
                 .header("Authorization", "Bearer " + accessToken)
                 .when()
-                .delete("/clubs/" + clubId + "/members/me/")
+                .delete(CLUBS_ENDPOINT + clubId + "/members/me/")
                 .then()
                 .spec(successfulClubMembershipResponseSpec);
     }
 
     @Step("Получение удаленного клуба по id")
-    public void getDeletedClubById(Integer clubId) {
-        given(clubRequestSpec)
+    public ErrorResponseModel getDeletedClubById(Integer clubId) {
+        return given(clubRequestSpec)
                 .when()
-                .get("/clubs/" + clubId + "/")
+                .get(CLUBS_ENDPOINT + clubId + "/")
                 .then()
-                .spec(notFoundClubResponseSpec);
+                .spec(notFoundClubResponseSpec)
+                .extract()
+                .as(ErrorResponseModel.class);
     }
 }

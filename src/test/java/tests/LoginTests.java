@@ -1,21 +1,30 @@
 package tests;
 
+import io.qameta.allure.Description;
+import io.qameta.allure.Feature;
+import io.qameta.allure.Severity;
+import io.qameta.allure.SeverityLevel;
 import models.login.LoginBodyModel;
 import models.login.LoginValidationErrorResponseModel;
 import models.login.SuccessfulLoginResponseModel;
 import models.login.WrongCredentialsLoginResponseModel;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import static io.qameta.allure.Allure.step;
 import static org.assertj.core.api.Assertions.assertThat;
 import static tests.TestData.*;
 
+@Feature("Авторизация")
+@Tag("api")
 @DisplayName("Авторизация")
 public class LoginTests extends TestBase {
 
     @DisplayName("Успешный логин")
     @Test
+    @Description("POST /auth/token/ с валидными данными возвращает access и refresh токены.")
+    @Severity(SeverityLevel.CRITICAL)
     public void successfulLoginTest() {
         LoginBodyModel loginData = new LoginBodyModel(LOGIN_USERNAME, LOGIN_PASSWORD);
 
@@ -30,6 +39,8 @@ public class LoginTests extends TestBase {
 
     @DisplayName("Логин с неверным паролем")
     @Test
+    @Description("POST /auth/token/ с неверным паролем возвращает сообщение о неверных credentials.")
+    @Severity(SeverityLevel.NORMAL)
     public void wrongCredentialsLoginTest() {
         LoginBodyModel loginData = new LoginBodyModel(LOGIN_USERNAME, LOGIN_WRONG_PASSWORD);
 

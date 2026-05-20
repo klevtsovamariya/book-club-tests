@@ -22,11 +22,11 @@ public class UpdateUserPutTests extends TestBase {
 
     @BeforeEach
     public void prepareUserAndToken() {
-        username = "upd_user_" + System.currentTimeMillis();
-        password = "upd_pass_" + System.currentTimeMillis();
+        username = "upd_user_" + faker.internet().uuid().replace("-", "");
+        password = "upd_pass_" + faker.number().digits(8);
 
         RegistrationBodyModel registrationData = new RegistrationBodyModel(username, password);
-        api.registration.register(registrationData);
+        api.users.register(registrationData);
         accessToken = api.auth.loginAndGetAccessToken(new LoginBodyModel(username, password));
     }
 

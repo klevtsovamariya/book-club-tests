@@ -1,8 +1,12 @@
 package tests;
 
 import models.club.ClubBodyModel;
+import models.club.ClubReviewBodyModel;
+import net.datafaker.Faker;
 
 public class TestData {
+    private static final Faker faker = new Faker();
+    public static final String LOGIN_ID = "2";
 
     public static final String LOGIN_USERNAME = "user8";
     public static final String LOGIN_PASSWORD = "user8";
@@ -13,8 +17,11 @@ public class TestData {
     public static final String EMPTY_ERROR = "This field may not be blank.";
     public static final String LOGOUT_INVALID_TOKEN_ERROR = "Token is invalid";
     public static final String NULL_ERROR = "This field may not be null.";
+    public static final String REQUIRED_ERROR = "This field is required.";
     public static final String INVALID_EMAIL_ERROR = "Enter a valid email address.";
     public static final String UNAUTHORIZED_ERROR = "Authentication credentials were not provided.";
+    public static final String FORBIDDEN_ERROR = "You do not have permission to perform this action.";
+    public static final String CLUB_NOT_FOUND_ERROR = "No Club matches the given query.";
 
     public static final String REGISTRATION_EXISTING_USER_ERROR =
             "A user with that username already exists.";
@@ -24,14 +31,21 @@ public class TestData {
                     + "(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)$";
 
     public static ClubBodyModel createClubData(String marker) {
-        long suffix = System.currentTimeMillis();
-
         return new ClubBodyModel(
-                "Book " + marker + " " + suffix,
-                "Author " + marker,
-                2026,
-                "Description " + marker,
-                "https://t.me/bookclub" + suffix
+                "API Club " + marker + " " + faker.book().title(),
+                faker.book().author(),
+                faker.number().numberBetween(1950, 2027),
+                faker.lorem().sentence(),
+                "https://t.me/" + marker + "_" + faker.internet().uuid().replace("-", "")
+        );
+    }
+
+    public static ClubReviewBodyModel createClubReviewData(Integer clubId, String marker) {
+        return new ClubReviewBodyModel(
+                clubId,
+                "Review " + marker + " " + faker.lorem().sentence(),
+                faker.number().numberBetween(1, 6),
+                faker.number().numberBetween(1, 700)
         );
     }
 }

@@ -44,6 +44,22 @@ public class ClubSpec {
             .expectBody("results", notNullValue())
             .build();
 
+    public static ResponseSpecification successfulCreateClubReviewResponseSpec = new ResponseSpecBuilder()
+            .log(ALL)
+            .expectStatusCode(201)
+            .expectBody(matchesJsonSchemaInClasspath("schemas/club/successful_club_review_response_schema.json"))
+            .expectBody("id", notNullValue())
+            .expectBody("user", notNullValue())
+            .build();
+
+    public static ResponseSpecification successfulClubReviewResponseSpec = new ResponseSpecBuilder()
+            .log(ALL)
+            .expectStatusCode(200)
+            .expectBody(matchesJsonSchemaInClasspath("schemas/club/successful_club_review_response_schema.json"))
+            .expectBody("id", notNullValue())
+            .expectBody("user", notNullValue())
+            .build();
+
     public static ResponseSpecification successfulDeleteClubResponseSpec = new ResponseSpecBuilder()
             .log(ALL)
             .expectStatusCode(204)
@@ -59,5 +75,26 @@ public class ClubSpec {
     public static ResponseSpecification notFoundClubResponseSpec = new ResponseSpecBuilder()
             .log(ALL)
             .expectStatusCode(404)
+            .expectBody(matchesJsonSchemaInClasspath("schemas/common/detail_error_response_schema.json"))
+            .build();
+
+    public static ResponseSpecification unauthorizedClubResponseSpec = new ResponseSpecBuilder()
+            .log(ALL)
+            .expectStatusCode(401)
+            .expectBody(matchesJsonSchemaInClasspath("schemas/common/detail_error_response_schema.json"))
+            .expectBody("detail", notNullValue())
+            .build();
+
+    public static ResponseSpecification forbiddenClubResponseSpec = new ResponseSpecBuilder()
+            .log(ALL)
+            .expectStatusCode(403)
+            .expectBody(matchesJsonSchemaInClasspath("schemas/common/detail_error_response_schema.json"))
+            .expectBody("detail", notNullValue())
+            .build();
+
+    public static ResponseSpecification invalidClubReviewResponseSpec = new ResponseSpecBuilder()
+            .log(ALL)
+            .expectStatusCode(400)
+            .expectBody(matchesJsonSchemaInClasspath("schemas/club/invalid_club_review_response_schema.json"))
             .build();
 }
