@@ -12,7 +12,6 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import pages.ClubPage;
 import pages.ClubsPage;
-import pages.LoginPage;
 import pages.ProfilePage;
 
 import static com.codeborne.selenide.Selenide.closeWebDriver;
@@ -24,16 +23,28 @@ public class TestBase {
     protected final Faker faker = new Faker();
     protected final ClubsPage clubsPage = new ClubsPage();
     protected final ClubPage clubPage = new ClubPage();
-    protected final LoginPage loginPage = new LoginPage();
     protected final ProfilePage profilePage = new ProfilePage();
 
     @BeforeAll
     public static void setUp() {
-        RestAssured.baseURI = "https://book-club.qa.guru";
+        String baseUrl = TestConfig.baseUrl();
+
+        RestAssured.baseURI = baseUrl;
         RestAssured.basePath = "/api/v1";
 
-        Configuration.baseUrl = "https://book-club.qa.guru";
-        Configuration.browserSize = "1920x1080";
+        Configuration.baseUrl = baseUrl;
+        System.setProperty("selenide.baseUrl", baseUrl);
+        Configuration.browser = TestConfig.browser();
+        Configuration.browserSize = TestConfig.browserSize();
+        Configuration.browserVersion = TestConfig.browserVersion();
+        Configuration.headless = TestConfig.headless();
+        Configuration.timeout = 10000;
+        Configuration.pageLoadStrategy = "eager";
+
+        String remote = TestConfig.remoteUrl();
+        if (!remote.isEmpty()) {
+            Configuration.remote = remote;
+        }
     }
 
     @BeforeEach
